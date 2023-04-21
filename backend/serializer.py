@@ -1,19 +1,31 @@
 from rest_framework import serializers
-from .models import userprofile
+from .models import saved_products, product
 from django.contrib.auth.models import User
 
 
-class CheckUserSerializer(serializers.ModelSerializer):
+class user_serializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name',
-                  'email', 'password', 'is_staff')
-# is staff check
+        fields = ('username',
+                  'email', 'password')
 
 
-class user_serializer(serializers.ModelSerializer):
-    user = CheckUserSerializer(required=True)
+# class user_serializer(serializers.ModelSerializer):
+#     user = check_user_serializer(required=True)
 
+#     class Meta:
+#         model = userprofile
+#         fields = ['user']
+
+
+class savedproducts_serializer(serializers.ModelSerializer):
     class Meta:
-        model = userprofile
-        fields = ['user', 'middle_name', 'dob', 'phone_number']
+        model = saved_products
+        fields = ['id', 'email', 'product_id', 'bidded']
+
+
+class product_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = product
+        fields = ['id', 'name', 'price', 'cataegory', 'postedby',
+                  'highest_bid', 'expire_time', 'posted_on', 'current_bidder']
