@@ -11,6 +11,7 @@ import jwt
 from .send_token import get_token
 from .authentication import is_logged_in
 import time
+import cloudinary.uploader
 # Create your views here.
 
 # register user
@@ -108,15 +109,6 @@ class products(APIView):
             return Response(serializer.data)
         except:
             return Response({'msg': 'Could not fetch'})
-# post a product, while posting
-# import datetime
-# datetime.date.today()  # Returns 2018-01-15
-# datetime.datetime.now() # Returns 2018-01-15 09:00
-
-    def post(self, request, format=None):
-        pass
-
-# posted by a user
 
 
 class get_posted_products(APIView):
@@ -124,8 +116,7 @@ class get_posted_products(APIView):
         logged_in = is_logged_in(request)
         if not logged_in:
             raise AuthenticationFailed('Unauthenticated!')
-        user_details = User.objects.get(email=request.data['email'])
-        user_id = user_details.email
+        user_id = request.data['email']
         wished_products = product.objects.filter(email=user_id)
         try:
             serializer = product_serializer(wished_products, many=True)
@@ -214,3 +205,26 @@ class delete_saved_products(APIView):
 
 
 # get the current time in seconds since the epoch
+
+class img_upload(APIView):
+    def post(self, request, format=None):
+        file = request.data.get('picture')
+
+        upload_data = cloudinary.uploader.upload(file)
+        console.log(upload_data)
+        return Response({
+            'status': 'success',
+            'data': upload_data,
+        }, status=201)
+# post a product, while posting
+# import datetime
+# datetime.date.today()  # Returns 2018-01-15
+# datetime.datetime.now() # Returns 2018-01-15 09:00
+
+    # def post(self, request, format=None):
+    #     logged_in = is_logged_in(request)
+    #     if not logged_in:
+    #         raise AuthenticationFailed('Unauthenticated!')
+    #     user_id = request.data['email']
+        # image =
+# posted by a user
