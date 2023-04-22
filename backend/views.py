@@ -98,7 +98,7 @@ class get_user_details(APIView):
 # all
 
 
-class products(APIView):
+class getproduct(APIView):
     def get(self, request, pk=None, format=None):
         if pk is None:
             wished_product = product.objects.all()
@@ -109,6 +109,22 @@ class products(APIView):
             return Response(serializer.data)
         except:
             return Response({'msg': 'Could not fetch'})
+
+
+class postproduct(APIView):
+
+    def post(self, request, format=None):
+        logged_in = is_logged_in(request)
+        if not logged_in:
+            raise AuthenticationFailed('Unauthenticated!')
+        product_data = request.data
+        serailize = product_serializer(data=product_data)
+        if serailize.is_valid():
+            try:
+                serailize.save()
+                return Response({'msg': 'Saved Successfully'})
+            except:
+                return Response({'msg': 'Cannot save'})
 
 
 class get_posted_products(APIView):
@@ -182,7 +198,7 @@ class saved_products(APIView):
             return Response({'msg': 'Sorry could not fetch products'})
 
 
-class delete_saved_products(APIView):
+class remove_saved_products(APIView):
     def delete(self, request, pk=None):
         logged_in = is_logged_in(request)
         if not logged_in:
@@ -208,23 +224,12 @@ class delete_saved_products(APIView):
 
 class img_upload(APIView):
     def post(self, request, format=None):
+        logged_in = is_logged_in(request)
+        if not logged_in:
+            raise AuthenticationFailed('Unauthenticated!')
         file = request.data.get('picture')
-
         upload_data = cloudinary.uploader.upload(file)
-        console.log(upload_data)
         return Response({
             'status': 'success',
             'data': upload_data,
         }, status=201)
-# post a product, while posting
-# import datetime
-# datetime.date.today()  # Returns 2018-01-15
-# datetime.datetime.now() # Returns 2018-01-15 09:00
-
-    # def post(self, request, format=None):
-    #     logged_in = is_logged_in(request)
-    #     if not logged_in:
-    #         raise AuthenticationFailed('Unauthenticated!')
-    #     user_id = request.data['email']
-        # image =
-# posted by a user
